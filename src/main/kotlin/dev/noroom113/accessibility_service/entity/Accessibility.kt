@@ -8,7 +8,9 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 
 @Entity
 data class Accessibility(
@@ -18,12 +20,18 @@ data class Accessibility(
     val name: String,
     val description: String,
     @ElementCollection(targetClass = UrlAccessable::class, fetch = FetchType.EAGER)
-    val urlAccessables: List<UrlAccessable> = emptyList(),
-    @OneToMany(fetch = FetchType.EAGER)
-    val childAccessibilities: List<Accessibility> = emptyList(),
+    val urlAccessables: MutableList<UrlAccessable> = mutableListOf(),
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "accessibility_hierarchy",
+        joinColumns = [JoinColumn(name = "parent_accessibility_id")],
+        inverseJoinColumns = [JoinColumn(name = "child_accessibility_id")]
+    )
+    val childAccessibilities: MutableList<Accessibility> = mutableListOf()
 ) {
     constructor(name: String, description: String) : this(0, name, description)
-    constructor(name: String, description: String, urlAccessables: List<UrlAccessable>) : this(
+    constructor(name: String, description: String, urlAccessables: MutableList<UrlAccessable>) : this(
         0,
         name,
         description,
@@ -33,8 +41,8 @@ data class Accessibility(
     constructor(
         name: String,
         description: String,
-        urlAccessables: List<UrlAccessable>,
-        childAccessibilities: List<Accessibility>,
+        urlAccessables: MutableList<UrlAccessable>,
+        childAccessibilities: MutableList<Accessibility>,
     ) : this(0, name, description, urlAccessables, childAccessibilities)
 
     override fun toString(): String {

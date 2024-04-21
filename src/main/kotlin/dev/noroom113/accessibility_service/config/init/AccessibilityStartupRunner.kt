@@ -16,7 +16,7 @@ class AccessibilityStartupRunner(
             Accessibility(
                 "admin",
                 "This is the admin accessibility, you can do anything",
-                listOf(
+                mutableListOf(
                     UrlAccessable(
                         "ALL",
                         "/api/v1/**"
@@ -29,7 +29,7 @@ class AccessibilityStartupRunner(
             Accessibility(
                 "guest",
                 "test",
-                listOf(
+                mutableListOf(
                     UrlAccessable(
                         "GET",
                         "/api/v1/car/all"
@@ -47,14 +47,11 @@ class AccessibilityStartupRunner(
             Accessibility(
                 "staff",
                 "This is the staff accessibility, you can do anything except delete",
-                listOf(
+                mutableListOf(
                     UrlAccessable(
                         "ALL",
                         "/api/v1/contract/**"
                     )
-                ),
-                listOf(
-                    guestAccessibility
                 )
             )
         )
@@ -63,17 +60,18 @@ class AccessibilityStartupRunner(
             Accessibility(
                 "authen_level_1",
                 "This is the first level of authentication",
-                listOf(
+                mutableListOf(
                     UrlAccessable(
                         "GET",
                         "/api/v1/contract/**"
                     ),
-                ),
-                listOf(
-                    guestAccessibility
                 )
             )
         )
+        staffAccessibility.childAccessibilities.add(guestAccessibility)
+        authenLevel1Accessibility.childAccessibilities.add(guestAccessibility)
+        accessibilityService.updateAccessibility(staffAccessibility)
+        accessibilityService.updateAccessibility(authenLevel1Accessibility)
         println(accessibilityService.getAccessibilities())
     }
 }
