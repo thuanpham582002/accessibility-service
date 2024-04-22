@@ -5,22 +5,21 @@ import jakarta.persistence.ElementCollection
 import jakarta.persistence.Embeddable
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
+import java.io.Serializable
 
 @Entity
 data class Accessibility(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
     val id: Long = 0,
     @Column(unique = true)
     val name: String,
     val description: String,
     @ElementCollection(targetClass = UrlAccessable::class, fetch = FetchType.EAGER)
-    val urlAccessables: MutableList<UrlAccessable> = mutableListOf(),
+    val urlAccessables: MutableSet<UrlAccessable> = mutableSetOf(),
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -28,10 +27,10 @@ data class Accessibility(
         joinColumns = [JoinColumn(name = "parent_accessibility_id")],
         inverseJoinColumns = [JoinColumn(name = "child_accessibility_id")]
     )
-    val childAccessibilities: MutableList<Accessibility> = mutableListOf()
+    val childAccessibilities: MutableSet<Accessibility> = mutableSetOf(),
 ) {
     constructor(name: String, description: String) : this(0, name, description)
-    constructor(name: String, description: String, urlAccessables: MutableList<UrlAccessable>) : this(
+    constructor(name: String, description: String, urlAccessables: MutableSet<UrlAccessable>) : this(
         0,
         name,
         description,
@@ -41,8 +40,8 @@ data class Accessibility(
     constructor(
         name: String,
         description: String,
-        urlAccessables: MutableList<UrlAccessable>,
-        childAccessibilities: MutableList<Accessibility>,
+        urlAccessables: MutableSet<UrlAccessable>,
+        childAccessibilities: MutableSet<Accessibility>,
     ) : this(0, name, description, urlAccessables, childAccessibilities)
 
     override fun toString(): String {
@@ -54,18 +53,10 @@ data class Accessibility(
 
 @Embeddable
 data class UrlAccessable(
-    @HttpMethod val method: String,
+    val method: HttpMethod,
     val uri: String,
-)
+) : Serializable
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class HttpMethod {
-    companion object {
-        const val GET = "GET"
-        const val POST = "POST"
-        const val PUT = "PUT"
-        const val DELETE = "DELETE"
-        const val ALL = "ALL"
-    }
+enum class HttpMethod {
+    GET, POST, PUT, DELETE, ALL
 }
