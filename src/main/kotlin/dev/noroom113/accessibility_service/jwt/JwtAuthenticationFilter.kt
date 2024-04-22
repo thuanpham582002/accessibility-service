@@ -17,12 +17,13 @@ class JwtAuthenticationFilter(
     private val jwtUtil: JwtUtil,
     private val interceptors: List<JwtInterceptor>,
 ) : OncePerRequestFilter() {
-    companion object{
+    companion object {
         val WHITE_LIST = setOf<UrlAccessable>(
-            UrlAccessable(HttpMethod.ALL,"/api/v1/accessibility/all"),
-            UrlAccessable(HttpMethod.ALL,"/api/v1/accessibility/get"),
+            UrlAccessable(setOf(HttpMethod.ALL), "/api/v1/accessibility/all"),
+            UrlAccessable(setOf(HttpMethod.ALL), "/api/v1/accessibility/get"),
         )
     }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,

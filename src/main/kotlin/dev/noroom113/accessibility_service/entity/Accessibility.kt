@@ -1,6 +1,9 @@
 package dev.noroom113.accessibility_service.entity
 
+import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Column
+import jakarta.persistence.Convert
+import jakarta.persistence.Converter
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Embeddable
 import jakarta.persistence.Entity
@@ -53,9 +56,22 @@ data class Accessibility(
 
 @Embeddable
 data class UrlAccessable(
-    val method: HttpMethod,
+    @Convert(converter = HttpMethodSetConverter::class)
+    val method: Set<HttpMethod>,
     val uri: String,
 ) : Serializable
+
+@Converter(autoApply = true)
+class HttpMethodSetConverter : AttributeConverter<Set<HttpMethod>, String> {
+
+    override fun convertToDatabaseColumn(attribute: Set<HttpMethod>): String {
+        return attribute.joinToString(separator = ",") { it.name }
+    }
+
+    override fun convertToEntityAttribute(dbData: String): Set<HttpMethod> {
+        return dbData.split(",").map { HttpMethod.valueOf(it) }.toSet()
+    }
+}
 
 enum class HttpMethod {
     GET, POST, PUT, DELETE, ALL

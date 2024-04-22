@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class AccessibilityStartupRunner(
-    private val accessibilityService: AccessibilityService
+    private val accessibilityService: AccessibilityService,
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
         val guestAccessibility = accessibilityService.addAccessibility(
@@ -19,11 +19,11 @@ class AccessibilityStartupRunner(
                 "test",
                 mutableSetOf(
                     UrlAccessable(
-                        HttpMethod.ALL,
+                        setOf(HttpMethod.ALL),
                         "/api/v1/car/all"
                     ),
                     UrlAccessable(
-                        HttpMethod.ALL,
+                        setOf(HttpMethod.ALL),
                         "/api/v1/accessibility/{id}"
                     ),
                 )
@@ -38,9 +38,17 @@ class AccessibilityStartupRunner(
                 "This is the staff accessibility, you can do anything except delete",
                 mutableSetOf(
                     UrlAccessable(
-                        HttpMethod.ALL,
+                        setOf(HttpMethod.ALL),
                         "/api/v1/contract/**"
-                    )
+                    ),
+                    UrlAccessable(
+                        setOf(HttpMethod.ALL),
+                        "/api/v1/car/**"
+                    ),
+                    UrlAccessable(
+                        setOf(HttpMethod.GET),
+                        "/api/v1/user/**"
+                    ),
                 )
             )
         )
@@ -52,7 +60,7 @@ class AccessibilityStartupRunner(
                 "This is the first level of authentication",
                 mutableSetOf(
                     UrlAccessable(
-                        HttpMethod.ALL,
+                        setOf(HttpMethod.ALL),
                         "/api/v1/contract/**"
                     ),
                 )
@@ -66,8 +74,8 @@ class AccessibilityStartupRunner(
                 "This is the admin accessibility, you can do anything",
                 mutableSetOf(
                     UrlAccessable(
-                        HttpMethod.ALL,
-                        "**"
+                        setOf(HttpMethod.ALL),
+                        "/**"
                     )
                 ),
             )
