@@ -19,17 +19,12 @@ class AccessibilityStartupRunner(
                 "test",
                 mutableSetOf(
                     UrlAccessable(
-                        setOf(HttpMethod.ALL),
-                        "/api/v1/car/all"
-                    ),
-                    UrlAccessable(
-                        setOf(HttpMethod.ALL),
-                        "/api/v1/accessibility/{id}"
+                        "/api/v1/user/**",
+                        setOf(HttpMethod.GET)
                     ),
                 )
             )
         )
-
 
         val staffAccessibility = accessibilityService.addAccessibility(
             Accessibility(
@@ -38,16 +33,16 @@ class AccessibilityStartupRunner(
                 "This is the staff accessibility, you can do anything except delete",
                 mutableSetOf(
                     UrlAccessable(
-                        setOf(HttpMethod.ALL),
-                        "/api/v1/contract/**"
+                        "/api/v1/contract/**",
+                        setOf(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT)
                     ),
                     UrlAccessable(
-                        setOf(HttpMethod.ALL),
-                        "/api/v1/car/**"
+                        "/api/v1/car/**",
+                        setOf(HttpMethod.ALL)
                     ),
                     UrlAccessable(
-                        setOf(HttpMethod.GET),
-                        "/api/v1/user/**"
+                        "/api/v1/user/**",
+                        setOf(HttpMethod.GET)
                     ),
                 )
             )
@@ -60,8 +55,8 @@ class AccessibilityStartupRunner(
                 "This is the first level of authentication",
                 mutableSetOf(
                     UrlAccessable(
-                        setOf(HttpMethod.ALL),
-                        "/api/v1/contract/**"
+                        "/api/v1/contract/**",
+                        setOf(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT)
                     ),
                 )
             )
@@ -74,8 +69,8 @@ class AccessibilityStartupRunner(
                 "This is the admin accessibility, you can do anything",
                 mutableSetOf(
                     UrlAccessable(
-                        setOf(HttpMethod.ALL),
-                        "/**"
+                        "/**",
+                        setOf(HttpMethod.ALL)
                     )
                 ),
             )

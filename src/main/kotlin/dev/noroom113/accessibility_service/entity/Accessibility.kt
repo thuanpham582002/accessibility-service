@@ -56,9 +56,9 @@ data class Accessibility(
 
 @Embeddable
 data class UrlAccessable(
-    @Convert(converter = HttpMethodSetConverter::class)
-    val method: Set<HttpMethod>,
     val uri: String,
+    @Convert(converter = HttpMethodSetConverter::class)
+    val method: Set<HttpMethod> = setOf(HttpMethod.ALL),
 ) : Serializable
 
 @Converter(autoApply = true)
